@@ -88,7 +88,6 @@ Feature: Test de API súper simple
     When method delete
     Then status 204
 
-
   @DeleteCharacterNotFound
   Scenario: Eliminar personaje que no existe
     Given url baseUrlMarvel + '/characters/1'
