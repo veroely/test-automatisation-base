@@ -58,3 +58,22 @@ Feature: Test de API súper simple
     Then status 400
     * print response
     And match response.name == 'Name is required'
+
+  @PutCharacterSuccess
+  Scenario: Actualizar personaje
+    * def requestBody = read('classpath:../data/character-update.json')
+    Given url baseUrlMarvel + '/characters/553'
+    And request requestBody
+    When method put
+    Then status 200
+    And match response.name == 'Verónica Vicente'
+
+
+  @PutCharacterNotFound
+  Scenario: Actualiza personaje que no existe
+    * def requestBody = read('classpath:../data/character-update.json')
+    Given url baseUrlMarvel + '/characters/1'
+    And request requestBody
+    When method put
+    Then status 404
+    And match response.error == 'Character not found'
