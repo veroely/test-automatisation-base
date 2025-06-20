@@ -30,3 +30,31 @@ Feature: Test de API súper simple
     When method get
     Then status 404
     And match response.error == 'Character not found'
+
+  @CreateCharacterSuccess
+  Scenario: Crear personaje
+    * def requestBody = read('classpath:../data/character-create.json')
+    Given url baseUrlMarvel + '/characters'
+    And request requestBody
+    When method post
+    Then status 201
+
+  @CreateCharacterDuplicate
+  Scenario: Crear personaje duplicado
+    * def requestBody = read('classpath:../data/character-create.json')
+    Given url baseUrlMarvel + '/characters'
+    And request requestBody
+    When method post
+    Then status 400
+    And match response.error == 'Character name already exists'
+
+
+  @CreateCharacterValidateFields
+  Scenario: Validar campos al crear personaje
+    * def requestBody = read('classpath:../data/character-create-validate-fields.json')
+    Given url baseUrlMarvel + '/characters'
+    And request requestBody
+    When method post
+    Then status 400
+    * print response
+    And match response.name == 'Name is required'
