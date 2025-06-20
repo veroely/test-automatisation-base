@@ -1,96 +1,100 @@
-Feature: Test de API súper simple
+@ApiMarvel
+Feature: Test de APIsMarvel
 
   Background:
     * configure ssl = true
-    * def baseUrlMarvel = 'http://bp-se-test-cabcd9b246a5.herokuapp.com/testuser/api'
+    * url 'http://bp-se-test-cabcd9b246a5.herokuapp.com/testuser/api'
 
-  Scenario: Verificar que un endpoint público responde 200
-    Given url 'https://httpbin.org/get'
-    When method get
-    Then status 200
-
-  @GetAllCharactersMarvel
+  @id:1 @GetAllCharactersMarvel
   Scenario: Obtener todos los personajes
-    Given  url baseUrlMarvel +'/characters'
+    Given path '/characters'
     When method get
     Then status 200
 
-  @GetCharactersByIdSuccess
+  @id:2 @GetCharactersByIdSuccess
   Scenario Outline: Obtener personaje por ID <characterId>
-    Given url baseUrlMarvel + '/characters/<characterId>'
+    Given path '/characters/<characterId>'
     When method get
     Then status 200
     Examples:
       | characterId |
-      | 1317        |
-      | 1319        |
+      | 2621        |
+      | 2622        |
 
-  @GetCharactersByIdNotFound
+  @id:3 @GetCharactersByIdNotFound
   Scenario: Obtener personaje por ID
-    Given url baseUrlMarvel + '/characters/999'
+    Given path '/characters/999'
     When method get
     Then status 404
     And match response.error == 'Character not found'
 
-
-  @CreateCharacterSuccess
+    # CREATE
+  @id:4 @CreateCharacterSuccess
   Scenario Outline: Crear personaje
-    * def requestBody = read('classpath:../data/character-create.json')
-    Given url baseUrlMarvel + '/characters'
+    * def requestBody = read('classpath:../data/marvel/character-create.json')
+    Given path '/characters'
     And request requestBody
     When method post
     Then status 201
-    * print response
+    * print response.id
     Examples:
-        |  read('classpath:../data/characters-create.csv')|
+        |  read('classpath:../data/marvel/characters-create.csv')|
 
-  @CreateCharacterDuplicate
-  Scenario: Crear personaje duplicado
-    * def requestBody = read('classpath:../data/character-create.json')
-    Given url baseUrlMarvel + '/characters'
+  @id:5 @CreateCharacterDuplicate
+  Scenario Outline: Crear personaje duplicado
+    * def requestBody = read('classpath:../data/marvel/character-create.json')
+    Given path '/characters'
     And request requestBody
     When method post
     Then status 400
     And match response.error == 'Character name already exists'
+    Examples:
+      |  read('classpath:../data/marvel/characters-create.csv')|
 
-  @CreateCharacterValidateFields
+  @id:6 @CreateCharacterValidateFields
   Scenario: Validar campos al crear personaje
-    * def requestBody = read('classpath:../data/character-create-validate-fields.json')
-    Given url baseUrlMarvel + '/characters'
+    * def requestBody = read('classpath:../data/marvel/character-create-validate-fields.json')
+    Given path '/characters'
     And request requestBody
     When method post
     Then status 400
     * print response
     And match response.name == 'Name is required'
 
-
-  @PutCharacterSuccess
+  # UPDATE
+  @id:7 @PutCharacterSuccess
   Scenario: Actualizar personaje
-    * def requestBody = read('classpath:../data/character-update.json')
-    Given url baseUrlMarvel + '/characters/553'
+    * def requestBody = read('classpath:../data/marvel/character-update.json')
+    Given path '/characters/2621'
     And request requestBody
     When method put
     Then status 200
     And match response.name == 'Verónica Vicente'
 
-  @PutCharacterNotFound
+  @id:8 @PutCharacterNotFound
   Scenario: Actualiza personaje que no existe
-    * def requestBody = read('classpath:../data/character-update.json')
-    Given url baseUrlMarvel + '/characters/1'
+    * def requestBody = read('classpath:../data/marvel/character-update.json')
+    Given path '/characters/1'
     And request requestBody
     When method put
     Then status 404
     And match response.error == 'Character not found'
 
-
-  @DeleteCharacterSuccess
-  Scenario: Eliminar personaje
-    Given url baseUrlMarvel + '/characters/1314'
+     #DELETE
+  @id:9 @DeleteCharacterSuccess
+  Scenario Outline: Eliminar personaje
+    Given path '/characters/<characterId>'
     When method delete
     Then status 204
+    When method delete
+    Then status 204
+    Examples:
+      | characterId |
+      | 2771        |
+      | 2772        |
 
-  @DeleteCharacterNotFound
+  @id:10 @DeleteCharacterNotFound
   Scenario: Eliminar personaje que no existe
-    Given url baseUrlMarvel + '/characters/1'
+    Given path '/characters/1'
     When method delete
     Then status 404
