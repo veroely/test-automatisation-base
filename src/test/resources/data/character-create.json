@@ -1,6 +1,6 @@
 {
-  "name": "Verónica Vicente",
-  "alterego": "Tony Stark",
+  "name": "#(name)",
+  "alterego": "#(alterego)",
   "description": "Genius billionaire",
   "powers": ["Armor", "Flight"]
 }
