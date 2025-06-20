@@ -16,14 +16,15 @@ Feature: Test de API súper simple
     Then status 200
 
   @GetCharactersByIdSuccess
-  Scenario: Obtener personaje por ID
-    Given url baseUrlMarvel + '/characters/16'
+  Scenario Outline: Obtener personaje por ID <characterId>
+    Given url baseUrlMarvel + '/characters/<characterId>'
     When method get
     Then status 200
-#    Examples:
-#      | characterId |
-#      | 999         |
-#      | 1           |
+    Examples:
+      | characterId |
+      | 1317        |
+      | 1319        |
+
   @GetCharactersByIdNotFound
   Scenario: Obtener personaje por ID
     Given url baseUrlMarvel + '/characters/999'
